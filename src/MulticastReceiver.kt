@@ -22,11 +22,14 @@ class MulticastReceiver(private val serverAddress: InetAddress) {
                 val group = InetAddress.getByName("228.152.49.25")
                 setCorrectIpVersionInterface(group)
                 joinGroup(group)
+                print("Start UDP server")
                 while (true) {
                     val rxPacket = DatagramPacket(buffer, buffer.size)
                     receive(rxPacket)
+                    print("Got UDP message")
                     val rxString = rxPacket.let { String(it.data, length = it.length) }
                     if (rxString == "§reqaddress") {
+                        print("Got UDP message > §reqaddress")
                         val txString = "${serverAddress.hostName}:8954".toByteArray()
                         val txPacket = DatagramPacket(txString, txString.size, rxPacket.address, rxPacket.port)
                         send(txPacket)
